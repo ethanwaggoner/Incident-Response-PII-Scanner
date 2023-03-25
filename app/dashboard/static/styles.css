@@ -1,0 +1,189 @@
+/* Set the background image of the body and adjust padding */
+body {
+background-image: url('images/dark_background.png');
+background-repeat: no-repeat;
+background-size: cover;
+padding: 2.5em;
+}
+
+/* Style for italic text */
+i {
+font-size: 1.25rem;
+color: #8a8ad9;
+float: right !important;
+}
+
+/* Style for table headers */
+th {
+font-size: 1.5rem;
+}
+
+/* Style for cards */
+.card {
+height: 100% !important;
+border-style: solid !important;
+border-width: 3px !important;
+border-color: #545484 !important;
+border-radius: 0.5rem !important;
+margin-bottom: 10rem !important;
+}
+
+/* Style for card headers */
+.card-header {
+background-color: #545484 !important;
+}
+
+/* Style for card bodies */
+.card-body {
+background-color: #121212 !important;
+height: 100% !important;
+display: flex;
+flex-direction: column;
+opacity: 1 !important;
+}
+
+/* Style for card run body */
+.card-run-body {
+height: 100% !important;
+justify-content: flex-end !important;
+align-items: flex-end !important;
+font-size: 16px !important;
+}
+
+/* Style for card results */
+.card-results {
+justify-content: center !important;
+height: 100% !important;
+display: flex !important;
+flex-direction: column !important;
+}
+
+/* Style for tables */
+table {
+font-size: 16px !important;
+}
+
+/* Style for table rows */
+tr {
+color: white;
+background-color: #121212 !important;
+}
+
+/* Style for form check inputs */
+.form-check-input {
+background-color: #545484 !important;
+fill: #545484 !important;
+border-color: #545484 !important;
+}
+
+/* Style for form switches */
+.form-switch {
+background-color: #545484 !important;
+border-color: #545484 !important;
+}
+
+/* Style for checked form check inputs */
+.form-check-input:checked {
+background-color: #545484 !important;
+box-shadow: #545484 !important;
+fill: #545484 !important;
+}
+
+/* Style for form checks */
+.form-check {
+background-color: transparent !important;
+}
+
+/* Style for submit buttons */
+button[type="submit"] {
+color: white !important;
+background-color: #545484 !important;
+width: 100% !important;
+height: 110% !important;
+justify-content: center !important;
+font-size: 14px !important;
+border: 1.5rem;
+border-radius: 0.5rem !important;
+}
+
+/* Style for hovered submit buttons */
+button[type="submit"]:hover {
+background-color: #3e3e6d !important;
+cursor: pointer;
+}
+
+/* Style for footer */
+footer {
+color: slategray;
+float: right;
+padding-top: 2rem;
+}
+
+/* Style for numbers */
+.number {
+text-align: center;
+}
+
+/* Style for fractions */
+.fraction {
+align-items: center;
+}
+
+
+#pii-table_wrapper .pagination .page-item > a.page-link {
+  color: white;
+  background-color: #545484;
+  border-color: #545484;
+}
+
+#pii-table_wrapper .pagination .page-item > a.page-link:hover  {
+  color: #fff;
+  background-color: #545484;
+  border-color: #545484;
+}
+
+#pii-table_wrapper .pagination .page-item.active > a.page-link  {
+  color: #fff;
+  background-color: #3e3e6d;
+  border-color: #3e3e6d;
+}
+
+#pii-table_wrapper .pagination .page-item.disabled> a.page-link  {
+  color: white;
+  pointer-events: none;
+  background-color: #545484;
+  border-color: #545484;
+}
+
+/* Style for the CSV button */
+.dt-button.buttons-csv {
+  background-color: #545484;
+  color: white;
+  border-color: #545484;
+}
+
+/* Style for the Copy button */
+.dt-button.buttons-copy {
+  background-color: #545484;
+  color: white;
+  border-color: #545484;
+}
+
+.flash {
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  border: 1.5rem;
+  border-radius: 0.5rem ;
+}
+
+.custom-progress-bar {
+  background-color: #545484 !important;
+  height: 5rem !important;
+}
+
+.progress {
+  height: 5rem !important;
+}
+
