@@ -41,6 +41,7 @@ class Scanner:
             'excel': 'xlsx',
             'text': 'txt',
             'word': 'docx',
+            'csv': 'csv',
         }
 
         return [ext for ft, ext in file_types_extensions.items() if self.config[ft]]
@@ -49,10 +50,11 @@ class Scanner:
         # Assuming you have implemented functions like `extract_pdf_data`, `extract_excel_data`, etc.
         data_extract = DataExtract()
         extract_func_map = {
-            'pdf': data_extract.pdf_data_extract,
-            'xlsx': data_extract.excel_data_extract,
-            'txt': data_extract.text_data_extract,
-            'docx': data_extract.word_data_extract,
+            'pdf': data_extract.from_pdf,
+            'xlsx': data_extract.from_excel,
+            'txt': data_extract.from_txt,
+            'docx': data_extract.from_word,
+            'csv': data_extract.from_csv,
         }
         extracted_data = extract_func_map[file_extension](self.filename)
         self.search_pii(str(extracted_data))

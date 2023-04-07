@@ -4,10 +4,6 @@ from typing import List
 
 class PiiSearch:
     def __init__(self):
-        self.dl_prefix_list = [
-            "",
-            " ",
-        ]
         self.ssn_prefix_list = [
             "",
             " ",
@@ -41,23 +37,20 @@ class PiiSearch:
                                                                                        uncensored_list)]
 
     def us_ssn(self, data: str) -> List:
-        pii_list_list = [re.findall(rf"{prefix}\s\b\d{{3}}-\d{{2}}-\d{{4}}\b|"
-                                    rf"{prefix}\s\b\d{{3}}\s\d{{2}}\s\d{{4}}\b|"
-                                    rf"{prefix}\s\b\d{{3}}-\d{{6}}\b", data)
+        pii_list_list = [re.findall(rf"{prefix}(?:\s|-)?\b\d{{3}}(?:\s|-)?\d{{2}}(?:\s|-)?\d{{4}}\b", data)
                          for prefix in self.ssn_prefix_list]
         pii_list = [item for sublist in pii_list_list for item in sublist]
         return self.__censor_pii(pii_list, self.ssn_prefix_list)
 
     def us_ccn(self, data: str) -> List:
-        pii_unclean_list_list = [re.findall(rf"{prefix}\s\b\d{{4}}\s\d{{4}}\s\d{{4}}\s\d{{4}}\b|"
-                                            rf"{prefix}\s\b\d{{16}}\b|"
-                                            rf"{prefix}\s\b\d{{4}}-\d{{4}}-\d{{4}}-\d{{4}}\b", data)
-                                 for prefix in self.ccn_prefix_list]
+        pii_unclean_list_list = [
+            re.findall(rf"{prefix}(?:\s|-)?\b\d{{4}}(?:\s|-)?\d{{4}}(?:\s|-)?\d{{4}}(?:\s|-)?\d{{4}}\b", data)
+            for prefix in self.ccn_prefix_list]
 
         pii_unclean_list = [item for sublist in pii_unclean_list_list for item in sublist]
 
         pii_list = [str(pii) for pii in pii_unclean_list if self.__verify_us_ccn_luhn(
-            int(re.sub('[^0-9]|-|" "', '', pii)))]  # replaces non-digit characters with nothing
+            int(re.sub('[^0-9]', '', pii)))]  # replaces non-digit characters with nothing
 
         return self.__censor_pii(pii_list, self.ccn_prefix_list)
 

@@ -1,63 +1,101 @@
+import mimetypes
+
 import PyPDF2
-import docx2txt
+import docx
+from PyPDF2.errors import PdfReadError, FileNotDecryptedError
+from docx.opc.exceptions import PackageNotFoundError
 import pandas as pd
 
 
 class DataExtract:
-    # Extracts the data from the Word document
     @staticmethod
-    def word_data_extract(directory):
+    def from_pdf(file_path):
         try:
-            data = docx2txt.process(directory)
-            return data
-        except Exception:
-            pass
+            pdf_file = open(file_path, 'rb')
+        except FileNotFoundError:
+            return "Error: File not found."
+        except IOError:
+            return "Error: Unable to open the file."
 
-    # Extracts the data from the CSV file
-    @staticmethod
-    def csv_data_extract(directory):
         try:
-            data = str(pd.read_csv(directory, encoding="latin1"))
-            return data
+            pdf_reader = PyPDF2.PdfReader(pdf_file)
+            text = ''
+            for page_num in range(len(pdf_reader.pages)):
+                text += pdf_reader.pages[page_num].extract_text()
+            return text
+        except FileNotDecryptedError:
+            return ""
+        except PdfReadError:
+            return ""
         except Exception:
-            pass
+            return ""
 
-    # Extracts the data from the Excel file
     @staticmethod
-    def excel_data_extract(directory):
+    def from_csv(file_path):
         try:
-            spreadsheet = pd.ExcelFile(directory, engine="openpyxl")
-            data_list = []
-            for sheet in spreadsheet.sheet_names:
-                data = str(spreadsheet.parse(sheet))
-                data_list.append(data)
-            return data_list
+            data = pd.read_csv(file_path)
+        except FileNotFoundError:
+            return "Error: File not found."
+        except pd.errors.ParserError:
+            return "Error: Failed to parse the CSV file."
         except Exception:
-            pass
+            return "Error"
+        return data.to_string()
 
-    # Extracts the data from the Text file
     @staticmethod
-    def text_data_extract(directory):
+    def from_excel(file_path):
         try:
-            data_list = []
-            with open(directory, mode='r', encoding="latin-1") as f:
-                for line in f:
-                    data_list.append(line)
-                return data_list
+            data = pd.read_excel(file_path)
+        except FileNotFoundError:
+            return "Error: File not found."
         except Exception:
-            pass
+            return "Error: Failed to read the Excel file."
+        return data.to_string()
 
-    # Extracts the data from the PDF document
     @staticmethod
-    def pdf_data_extract(directory):
+    def from_txt(file_path):
         try:
-            with open(directory, mode='rb') as file:
-                reader = PyPDF2.PdfFileReader(file)
-                data_list = []
-                for page in reader.pages:
-                    pdf_text = page.extractText()
-                    pdf_text = pdf_text.replace('\n', '')
-                    data_list.append(pdf_text)
-                return data_list
+            with open(file_path, 'r') as file:
+                text = file.read()
+        except FileNotFoundError:
+            return ""
         except Exception:
-            pass
+            return ""
+        return text
+
+    @staticmethod
+    def from_word(file_path):
+        try:
+            doc = docx.Document(file_path)
+        except FileNotFoundError:
+            return "Error: File not found."
+        except PackageNotFoundError:
+            return "Error: Failed to read the Word document."
+        except Exception:
+            return "Error: Failed to read the Word document."
+
+        text = ''
+        for paragraph in doc.paragraphs:
+            text += paragraph.text + '\n'
+        return text
+
+    @staticmethod
+    def from_file(file_path):
+        mime_type, _ = mimetypes.guess_type(file_path)
+        if mime_type is None:
+            return "Error: Unable to determine the file type."
+
+        if mime_type == "application/pdf":
+            return DataExtract.from_pdf(file_path)
+        elif mime_type == "text/csv":
+            return DataExtract.from_csv(file_path)
+        elif mime_type in ["application/vnd.ms-excel",
+                           "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"]:
+            return DataExtract.from_excel(file_path)
+        elif mime_type == "text/plain":
+            return DataExtract.from_txt(file_path)
+        elif mime_type in ["application/msword",
+                           "application/vnd.openxmlformats-officedocument.wordprocessingml.document"]:
+            return DataExtract.from_word(file_path)
+        else:
+            return f"Error: Unsupported file type '{mime_type}'."

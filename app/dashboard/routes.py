@@ -24,16 +24,15 @@ def file_explorer():
 @blueprint.route('/', methods=['GET', 'POST'])
 def dashboard():
     if request.method == 'POST':
-        print("hi")
         if request.form.get('get_directory') == 'get_directory':
             file_explorer()
         if request.form.get('run') == 'run':
-            print("hi2")
             if not scan_path:
                 flash('Please select a directory')
                 return render_template('dashboard.html')
 
             data = {
+                'csv': request.form.get('flexSwitchCheckDefault0') == 'on',
                 'pdf': request.form.get('flexSwitchCheckDefault1') == 'on',
                 'excel': request.form.get('flexSwitchCheckDefault2') == 'on',
                 'text': request.form.get('flexSwitchCheckDefault3') == 'on',
