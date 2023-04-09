@@ -1,6 +1,8 @@
 # Overview
 
-PII Scanner is an application designed to search for Personally Identifiable Information (PII) within various file types in a specified directory. The application allows users to customize the scanning configurations, add custom search patterns, and view the results.
+Let’s say you get an alert that a client’s PC is infected by malware and is sending command and control traffic to a suspicious IP address. After isolating the affected PC, one of your first questions should be: Was any sensitive data compromised? One step in this process is to check if the PC contained PII. The stolen PII could be used in identity theft, and it is important if not required to notify any of the effected people. 
+
+This scanner is an application designed to search for Personally Identifiable Information (PII) within various file types in a specified directory. The application allows users to customize the scanning configurations, add custom search patterns, and view the results.
 
 ## Features
 
