@@ -1,5 +1,6 @@
 import mimetypes
 import aiofiles
+import asyncio
 import PyPDF2
 import docx
 from aiofiles.os import stat as aio_stat
@@ -13,13 +14,13 @@ class DataExtract:
     async def from_pdf(file_path):
         try:
             async with aiofiles.open(file_path, 'rb') as pdf_file:
-                pdf_reader = PyPDF2.PdfReader(pdf_file)
+                pdf_reader = PyPDF2.PdfReader(pdf_file.name)
                 text = ''
                 for page_num in range(len(pdf_reader.pages)):
                     text += pdf_reader.pages[page_num].extract_text()
                 return text
-        except (FileNotFoundError, FileNotDecryptedError, PdfReadError, Exception):
-            return ""
+        except (FileNotFoundError, FileNotDecryptedError, PdfReadError, Exception) as e:
+            print(e)
 
     @staticmethod
     async def from_csv(file_path):
@@ -32,10 +33,11 @@ class DataExtract:
     @staticmethod
     async def from_excel(file_path):
         try:
-            data = pd.read_excel(file_path)
-            return data.to_string()
-        except (FileNotFoundError, Exception):
-            return "Error"
+            async with aiofiles.open(file_path, 'rb') as excel_file:
+                data = pd.read_excel(excel_file.name)
+                return data.to_string()
+        except (FileNotFoundError, Exception) as e:
+            print(e)
 
     @staticmethod
     async def from_txt(file_path):

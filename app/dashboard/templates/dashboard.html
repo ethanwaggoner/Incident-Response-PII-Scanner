@@ -171,7 +171,8 @@
                       {% with messages = get_flashed_messages() %} {% if messages %} {% for message in messages %}
                       <h2>{{ message }}</h2>{% endfor %} {% endif %} {% endwith %}
                       </div>
-                    <button type="submit" name="run" id="run" value="run" class="btn">Run Scan</button>
+                    <input type="hidden" name="run" id="hiddenRun" value="">
+                    <button type="submit" name="run" id="run" value="run" class="btn" onclick="validateButton()">Run Scan</button>
                     <div class="progress">
                       <div class="progress-bar progress-bar-striped progress-bar-animated custom-progress-bar" role="progressbar" id="progress-bar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
                         0%
@@ -206,95 +207,9 @@
       <p>Created by | Ethan Waggoner | <a href="https://github.com/ethanwaggoner">https://github.com/ethanwaggoner</a></p>
     </footer>
   </form>
-<script>
-  $(document).ready(function() {
-  // Function to refresh the DataTable
-  function refreshDataTable() {
-    $('#pii-table').DataTable().ajax.reload(null, false);
-  }
-
-  function updateProgressBar() {
-    const numerator = parseInt($('#numerator').text());
-    const denominator = parseInt($('#denominator').text());
-    let percentage = 0;
-
-    if (denominator > 0) {
-      percentage = (numerator / denominator) * 100;
-    }
-
-    $('#progress-bar')
-      .css('width', percentage + '%')
-      .attr('aria-valuenow', percentage)
-      .text(percentage.toFixed(2) + '%');
-  }
-
-  function animateRunningText() {
-  $('#run').prop('disabled', true).html(' Running <span class="spinner"></span>');
-}
 
 
-  function checkCompletion() {
-    const numerator = parseInt($('#numerator').text());
-    const denominator = parseInt($('#denominator').text());
 
-    if (numerator === denominator && numerator > 0) {
-      $('#run').prop('disabled', false).text('Run Scan');
-    } else if (numerator < denominator) {
-      animateRunningText();
-    }
-      }
-
-  function fetchDataAndUpdate() {
-  const piiCountRequest = $.get('/dashboard/pii-count');
-  const totalFilesScannedRequest = $.get('/dashboard/total-files-scanned');
-  const totalFilesRequest = $.get('/dashboard/total-files');
-
-  $.when(piiCountRequest, totalFilesScannedRequest, totalFilesRequest).done(function (piiCountData, totalFilesScannedData, totalFilesData) {
-    $('#pii-count').text(piiCountData[0]);
-    $('#numerator').text(totalFilesScannedData[0]);
-    $('#denominator').text(totalFilesData[0]);
-
-    updateProgressBar();
-    checkCompletion();
-    refreshDataTable();
-  });
-}
-
-
-  setInterval(fetchDataAndUpdate, 1000);
-
-  $('#pii-table').DataTable({
-    dom: 'Bfrtip',
-    buttons: [
-      {
-        extend: 'csv',
-        className: 'btn',
-        text: 'Export to CSV',
-      },
-      {
-        extend: 'copy',
-        className: 'btn',
-        text: 'Copy to Clipboard',
-      },
-    ],
-    lengthChange: false,
-    paging: true,
-    info: false,
-    pagesize: 15,
-    scrollY: true,
-
-    ajax: {
-      url: '/dashboard/table-results',
-      dataSrc: '',
-      type: 'GET'
-    },
-    columns: [
-      { data: 'pii_type' },
-      { data: 'file_path' },
-      { data: 'pii' }
-    ]
-  });
-});
-</script>
+<script src="static/scripts.js"></script>
 </body>
 </html>

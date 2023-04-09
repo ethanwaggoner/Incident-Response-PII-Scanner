@@ -7,10 +7,27 @@ class PiiSearch:
         self.ssn_prefix_list = [
             "",
             " ",
+            "Social Security Number",
+            "Social Security Number:",
+            "SSN",
+            "SSN:",
+            "SSN#",
+            "SSN#:",
+            "SSN #",
+            "SSN #:",
+
         ]
         self.ccn_prefix_list = [
             "",
             " ",
+            "Credit Card Number",
+            "Credit Card Number:",
+            "CCN",
+            "CCN:",
+            "CCN#",
+            "CCN#:",
+            "CCN #",
+            "CCN #:",
         ]
 
     # verifies if a United States credit card number is legitimate and not a random string of 16 digits

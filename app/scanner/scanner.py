@@ -1,3 +1,4 @@
+import fnmatch
 import glob
 import requests
 import math
@@ -18,27 +19,34 @@ class Scanner:
         self.total_files = 0
         self.total_files_scanned = 0
 
-    async def post_async(self, url, json):
+    @staticmethod
+    async def post_async(url, json):
         async with httpx.AsyncClient() as client:
-            await client.post(url, json=json)
+            await client.post(url, json=json, timeout=3600)
 
-    async def run(self):
-        file_extensions = self.get_file_extensions()
-
-        self.total_files = sum(
-            1 for _, _, filenames in os.walk(self.scan_path)
-            for file in filenames
-            if any(file.endswith(ext) for ext in file_extensions)
-        )
-
+    async def count_total_files_and_post(self, file_extensions):
+        count = 0
+        for root, _, filenames in os.walk(self.scan_path):
+            for ext in file_extensions:
+                count += sum(fnmatch.fnmatch(file, f'*.{ext}') for file in filenames)
+        self.total_files = count
         await self.post_async('http://localhost:5001/dashboard/total-files', self.total_files)
 
+    async def scan_files(self, file_extensions):
         for ext in file_extensions:
             for filepath in glob.iglob(f'{self.scan_path}/**/*.{ext}', recursive=True):
                 self.filename = filepath
                 await self.scan_file_type(ext)
+        await self.post_async('http://localhost:5001/dashboard/total-files-scanned', self.total_files_scanned)
 
-        await self.post_async('http://localhost:5001/dashboard/total-files-scanned', self.total_files)
+    async def run(self):
+        file_extensions = self.get_file_extensions()
+
+        # Run the count_total_files_and_post and scan_files methods concurrently
+        await asyncio.gather(
+            self.count_total_files_and_post(file_extensions),
+            self.scan_files(file_extensions)
+        )
 
     def get_file_extensions(self):
         file_types_extensions = {
@@ -65,9 +73,9 @@ class Scanner:
 
     async def search_pii(self, data):
         self.total_files_scanned += 1
-        if self.total_files_scanned % 10 == 0 or self.total_files_scanned == self.total_files:
+        five_percent = math.ceil(self.total_files / 20)
+        if self.total_files_scanned % five_percent == 0 or self.total_files_scanned == self.total_files:
             await self.post_async('http://localhost:5001/dashboard/total-files-scanned', self.total_files_scanned)
-
         if data is None:
             return
         for pii_type in ['ssn', 'ccn']:
