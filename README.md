@@ -32,15 +32,3 @@ Usage
     (Optional) Add custom search patterns using regex
     Click "Run Scan" and wait for the scan to complete
     Review the results in the "Results" section
-
-Contributing
-
-If you would like to contribute to the project, please check out the repository on GitHub: https://github.com/ethanwaggoner/Incident-Response-PII-Scanner
-
-Author
-
-Ethan Waggoner - https://github.com/ethanwaggoner
-
-License
-
-BSD 3-Clause License
