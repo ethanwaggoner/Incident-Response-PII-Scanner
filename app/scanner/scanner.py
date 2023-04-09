@@ -60,12 +60,13 @@ class Scanner:
             'docx': data_extract.from_word,
             'csv': data_extract.from_csv,
         }
-        extracted_data = extract_func_map[file_extension](self.filename)
+        extracted_data = await extract_func_map[file_extension](self.filename)
         await self.search_pii(str(extracted_data))
 
     async def search_pii(self, data):
         self.total_files_scanned += 1
-        await self.post_async('http://localhost:5001/dashboard/total-files-scanned', self.total_files_scanned)
+        if self.total_files_scanned % 10 == 0 or self.total_files_scanned == self.total_files:
+            await self.post_async('http://localhost:5001/dashboard/total-files-scanned', self.total_files_scanned)
 
         if data is None:
             return
@@ -80,7 +81,7 @@ class Scanner:
             'ssn': pii_search.us_ssn,
             'ccn': pii_search.us_ccn,
         }
-        censored_pii = search_func_map[pii_type](str(data))
+        censored_pii = await search_func_map[pii_type](str(data))
         if censored_pii:
             self.id += 1
             pii = {

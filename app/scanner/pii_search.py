@@ -36,13 +36,13 @@ class PiiSearch:
                                                                                        censored_list,
                                                                                        uncensored_list)]
 
-    def us_ssn(self, data: str) -> List:
+    async def us_ssn(self, data: str) -> List:
         pii_list_list = [re.findall(rf"{prefix}(?:\s|-)?\b\d{{3}}(?:\s|-)?\d{{2}}(?:\s|-)?\d{{4}}\b", data)
                          for prefix in self.ssn_prefix_list]
         pii_list = [item for sublist in pii_list_list for item in sublist]
         return self.__censor_pii(pii_list, self.ssn_prefix_list)
 
-    def us_ccn(self, data: str) -> List:
+    async def us_ccn(self, data: str) -> List:
         pii_unclean_list_list = [
             re.findall(rf"{prefix}(?:\s|-)?\b\d{{4}}(?:\s|-)?\d{{4}}(?:\s|-)?\d{{4}}(?:\s|-)?\d{{4}}\b", data)
             for prefix in self.ccn_prefix_list]
