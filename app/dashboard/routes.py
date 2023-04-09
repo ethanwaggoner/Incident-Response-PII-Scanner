@@ -1,3 +1,4 @@
+import asyncio
 from asyncio import run
 
 from PyQt5.QtWidgets import QApplication, QFileDialog
@@ -22,7 +23,7 @@ def file_explorer():
 
 
 @blueprint.route('/', methods=['GET', 'POST'])
-def dashboard():
+async def dashboard():
     if request.method == 'POST':
         if request.form.get('get_directory') == 'get_directory':
             file_explorer()
@@ -53,12 +54,13 @@ def dashboard():
                 ]
             }
             print(data)
-            Scanner(data).run()
+            scanner = Scanner(data)
+            await scanner.run()
     return render_template('dashboard.html')
 
 
 @blueprint.route('/table-results', methods=['GET', 'POST'])
-def table_results():
+async def table_results():
     if request.method == 'POST':
         row = request.json
         table_data.append(row)
@@ -67,12 +69,12 @@ def table_results():
 
 
 @blueprint.route('/pii-count', methods=['GET'])
-def pii_count():
+async def pii_count():
     return jsonify(len(table_data))
 
 
 @blueprint.route('/total-files', methods=['GET', 'POST'])
-def total_files():
+async def total_files():
     global total_files_to_scan
 
     if request.method == 'POST':
@@ -82,7 +84,7 @@ def total_files():
 
 
 @blueprint.route('/total-files-scanned', methods=['GET', 'POST'])
-def total_files_scanned():
+async def total_files_scanned():
     global total_scanned
 
     if request.method == 'POST':

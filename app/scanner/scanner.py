@@ -2,6 +2,8 @@ import glob
 import requests
 import math
 import os
+import httpx
+import asyncio
 
 from app.scanner.data_extraction import DataExtract
 from app.scanner.pii_search import PiiSearch
@@ -16,7 +18,11 @@ class Scanner:
         self.total_files = 0
         self.total_files_scanned = 0
 
-    def run(self):
+    async def post_async(self, url, json):
+        async with httpx.AsyncClient() as client:
+            await client.post(url, json=json)
+
+    async def run(self):
         file_extensions = self.get_file_extensions()
 
         self.total_files = sum(
@@ -25,15 +31,14 @@ class Scanner:
             if any(file.endswith(ext) for ext in file_extensions)
         )
 
-        requests.post('http://localhost:5001/dashboard/total-files', json=self.total_files)
+        await self.post_async('http://localhost:5001/dashboard/total-files', self.total_files)
 
         for ext in file_extensions:
             for filepath in glob.iglob(f'{self.scan_path}/**/*.{ext}', recursive=True):
                 self.filename = filepath
-                self.scan_file_type(ext)
+                await self.scan_file_type(ext)
 
-        requests.post('http://localhost:5001/dashboard/total-files-scanned',
-                      json=self.total_files)
+        await self.post_async('http://localhost:5001/dashboard/total-files-scanned', self.total_files)
 
     def get_file_extensions(self):
         file_types_extensions = {
@@ -46,8 +51,7 @@ class Scanner:
 
         return [ext for ft, ext in file_types_extensions.items() if self.config[ft]]
 
-    def scan_file_type(self, file_extension):
-        # Assuming you have implemented functions like `extract_pdf_data`, `extract_excel_data`, etc.
+    async def scan_file_type(self, file_extension):
         data_extract = DataExtract()
         extract_func_map = {
             'pdf': data_extract.from_pdf,
@@ -57,24 +61,19 @@ class Scanner:
             'csv': data_extract.from_csv,
         }
         extracted_data = extract_func_map[file_extension](self.filename)
-        self.search_pii(str(extracted_data))
+        await self.search_pii(str(extracted_data))
 
-    def search_pii(self, data):
-        five_percent = math.ceil(self.total_files / 20)
-
+    async def search_pii(self, data):
         self.total_files_scanned += 1
-
-        if self.total_files_scanned % five_percent == 0:
-            requests.post('http://localhost:5001/dashboard/total-files-scanned',
-                          json=self.total_files_scanned)
+        await self.post_async('http://localhost:5001/dashboard/total-files-scanned', self.total_files_scanned)
 
         if data is None:
             return
         for pii_type in ['ssn', 'ccn']:
             if self.config[pii_type]:
-                self.search_pii_type(data, pii_type)
+                await self.search_pii_type(data, pii_type)
 
-    def search_pii_type(self, data, pii_type):
+    async def search_pii_type(self, data, pii_type):
         # Assuming you have implemented functions like `find_censored_ssn`, `find_censored_ccn`, etc.
         pii_search = PiiSearch()
         search_func_map = {
@@ -91,5 +90,4 @@ class Scanner:
                 "pii": censored_pii[0],
 
             }
-            requests.post('http://localhost:5001/dashboard/table-results', json=pii)
-
+            await self.post_async('http://localhost:5001/dashboard/table-results', pii)

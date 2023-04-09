@@ -53,11 +53,3 @@ class PiiSearch:
             int(re.sub('[^0-9]', '', pii)))]  # replaces non-digit characters with nothing
 
         return self.__censor_pii(pii_list, self.ccn_prefix_list)
-
-    def us_md_dl(self, data: str) -> List:
-        pii_list_list = [re.findall(rf"{prefix}\s[a-zA-Z]-\d{{3}}-\d{{3}}-\d{{3}}-\d{{3}}|"
-                                    rf"{prefix}\s[a-zA-Z]\d{{12}}", data)
-                         for prefix in self.dl_prefix_list]
-        pii_list = [item for sublist in pii_list_list for item in sublist]
-
-        return self.__censor_pii(pii_list, self.dl_prefix_list)
