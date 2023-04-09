@@ -1,5 +1,6 @@
 # Incident-Response-PII-Scanner
 Overview
+![image](https://user-images.githubusercontent.com/74027222/230779328-cba3147b-346b-440d-af7f-dcb2563bb373.png)
 
 This is an application designed to search for Personally Identifiable Information (PII) within various file types in a specified directory. The application allows users to customize the scanning configurations, add custom search patterns, and view the results.
 Features
