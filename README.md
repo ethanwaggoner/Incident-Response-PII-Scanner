@@ -26,7 +26,7 @@ This scanner is an application designed to search for Personally Identifiable In
     
 ## Screenshots
 
-![image](https://user-images.githubusercontent.com/74027222/230779328-cba3147b-346b-440d-af7f-dcb2563bb373.png)
+![image](![image](https://user-images.githubusercontent.com/74027222/232165892-4bdcd91a-1224-45a7-8d11-e7d7c3a94c74.png))
 
 
 ## Authors
