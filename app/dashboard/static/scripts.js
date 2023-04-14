@@ -1,11 +1,43 @@
- function validateButton() {
-    $('#run').html('Validating...').prop('disabled', true);
-    $('#hiddenRun').val('run');
+let customSearchData = [];
 
-    setTimeout(function () {
-      $('#pii-form').submit();
-    }, 100);
+function validateButton() {
+  $('#run').html('Validating...').prop('disabled', true);
+  $('#hiddenRun').val('run');
+
+  // Include customSearchData in the form data
+  $('<input>').attr({
+    type: 'hidden',
+    name: 'custom_search_data',
+    value: JSON.stringify(customSearchData),
+  }).appendTo('#pii-form');
+
+  setTimeout(function () {
+    $('#pii-form').submit();
+  }, 100);
+}
+
+
+  function validateAndAdd() {
+  const nameInput = $('input[name="custom_search_name[]"]');
+  const regexInput = $('input[name="custom_search_regex[]"]');
+  const nameValue = nameInput.val().trim();
+  const regexValue = regexInput.val().trim();
+
+  if (nameValue && regexValue) {
+    const newRow = $('<tr></tr>');
+    newRow.append(`<td>${nameValue}</td>`);
+    newRow.append(`<td>${regexValue}</td>`);
+    $('#custom-regex').find('tbody').append(newRow);
+
+    customSearchData.push({name: nameValue, regex: regexValue});
+
+    // Clear the input fields after adding the row
+    nameInput.val('');
+    regexInput.val('');
+  } else {
+    alert('Please enter valid Name and Regex values');
   }
+}
 
   $(document).ready(function() {
 
@@ -94,4 +126,10 @@
       { data: 'pii' }
     ]
   });
+
+   $('#regex-btn').on('click', function (event) {
+  event.preventDefault();
+  validateAndAdd();
+});
+
 });

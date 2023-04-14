@@ -1,9 +1,11 @@
 import re
-from typing import List
+from typing import List, Dict, Union
 
 
 class PiiSearch:
-    def __init__(self):
+    def __init__(self, custom_search=None):
+        self.custom_search = custom_search
+
         self.ssn_prefix_list = [
             "",
             " ",
@@ -70,3 +72,18 @@ class PiiSearch:
             int(re.sub('[^0-9]', '', pii)))]  # replaces non-digit characters with nothing
 
         return self.__censor_pii(pii_list, self.ccn_prefix_list)
+
+    async def search_custom(self, data: str) -> List[str]:
+        result_list = []
+
+        if self.custom_search:
+            for custom in self.custom_search:
+                regex = custom.get("regex", "")
+
+                if regex:
+                    matches = re.findall(regex, data)
+                    if matches:
+                        result_list.extend(matches)
+
+        return result_list
+

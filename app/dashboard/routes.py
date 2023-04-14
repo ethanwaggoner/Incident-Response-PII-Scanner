@@ -1,4 +1,5 @@
 import asyncio
+import json
 import os
 import subprocess
 from asyncio import run
@@ -34,6 +35,9 @@ async def dashboard():
                 flash('Please select a directory')
                 return render_template('dashboard.html')
 
+            custom_search_data = request.form.get('custom_search_data')
+            custom_search = json.loads(custom_search_data)
+
             data = {
                 'csv': request.form.get('flexSwitchCheckDefault0') == 'on',
                 'pdf': request.form.get('flexSwitchCheckDefault1') == 'on',
@@ -43,19 +47,9 @@ async def dashboard():
                 'ssn': request.form.get('flexSwitchCheckDefault5') == 'on',
                 'ccn': request.form.get('flexSwitchCheckDefault6') == 'on',
                 'scan_path': scan_path,
-                'custom_search': [
-                    {
-                        'name': name.strip(),
-                        'regex': regex.strip()
-                    }
-                    for name, regex in zip(
-                        request.form.getlist('custom_search_name'),
-                        request.form.getlist('custom_search_regex')
-                    )
-                    if name.strip() and regex.strip()
-                ]
+                'custom_search': custom_search
             }
-            print(data)
+            print(custom_search)
             scanner = Scanner(data)
             await scanner.run()
     return render_template('dashboard.html')

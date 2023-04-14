@@ -106,31 +106,31 @@
                   Custom Search
                 </div>
                 <div class="card-body">
-                  <table class="table table-borderless">
+                  <table class="table table-bordeless enter-regex">
+                    <thead>
+                      <tr>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                      </tr>
+                    <tbody>
+                      <tr>
+                        <td><input type="text" class="form-control" placeholder="Name" name="custom_search_name[]"></td>
+                        <td><input type="text" class="form-control" placeholder="Regex" name="custom_search_regex[]"></td>
+                        <td><input type="submit" name="regex-btn" id="regex-btn" value="Add" class="btn"></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <table class="table table-borderless custom-regex" id="custom-regex">
                     <thead>
                       <tr>
                         <th scope="col">Name</th>
                         <th scope="col">Regex</th>
-                        <th scope="col">#</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td>Upper Case Letters</td>
-                        <td>[A-Z]</td>
-                        <td class="number">1</td>
-                      </tr>
-                      <tr>
-                        <td>Lower Case Letters</td>
-                        <td>[a-z]</td>
-                        <td class="number">2</td>
-                      </tr>
                     </tbody>
                   </table>
-                  <div class="container-fluid">
-                  <input type="text" class="form-control" placeholder="Name" name="custom_search_name[]">
-                  <input type="text" class="form-control" placeholder="Regex" name="custom_search_regex[]">
-                    </div>
                 </div>
               </div>
             </div>
@@ -207,9 +207,6 @@
       <p>Created by | Ethan Waggoner | <a href="https://github.com/ethanwaggoner">https://github.com/ethanwaggoner</a></p>
     </footer>
   </form>
-
-
-
 <script src="static/scripts.js"></script>
 </body>
 </html>

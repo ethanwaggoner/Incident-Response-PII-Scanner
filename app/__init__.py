@@ -12,7 +12,6 @@ def create_app():
     app = Flask(__name__)
     app.secret_key = os.urandom(32)
     register_blueprints(app)
-    #  configure_database(app)
 
     @app.route('/')
     def index():

@@ -7,9 +7,11 @@ from aiofiles.os import stat as aio_stat
 from PyPDF2.errors import PdfReadError, FileNotDecryptedError
 from docx.opc.exceptions import PackageNotFoundError
 import pandas as pd
+from memory_profiler import profile
 
 
 class DataExtract:
+
     @staticmethod
     async def from_pdf(file_path):
         try:

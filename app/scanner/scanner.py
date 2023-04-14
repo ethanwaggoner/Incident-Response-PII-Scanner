@@ -13,6 +13,7 @@ from app.scanner.pii_search import PiiSearch
 class Scanner:
     def __init__(self, config):
         self.config = config
+        self.custom_search = self.config['custom_search']
         self.scan_path = self.config['scan_path']
         self.id = 0
         self.filename = ""
@@ -78,16 +79,17 @@ class Scanner:
             await self.post_async('http://localhost:5001/dashboard/total-files-scanned', self.total_files_scanned)
         if data is None:
             return
-        for pii_type in ['ssn', 'ccn']:
-            if self.config[pii_type]:
+        for pii_type in ['ssn', 'ccn', 'custom']:
+            if self.config['ssn'] or self.config['ccn'] or pii_type == 'custom':
                 await self.search_pii_type(data, pii_type)
 
     async def search_pii_type(self, data, pii_type):
         # Assuming you have implemented functions like `find_censored_ssn`, `find_censored_ccn`, etc.
-        pii_search = PiiSearch()
+        pii_search = PiiSearch(self.custom_search)
         search_func_map = {
             'ssn': pii_search.us_ssn,
             'ccn': pii_search.us_ccn,
+            'custom': pii_search.search_custom,
         }
         censored_pii = await search_func_map[pii_type](str(data))
         if censored_pii:
