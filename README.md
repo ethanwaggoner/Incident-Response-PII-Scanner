@@ -21,25 +21,21 @@ PII Scanner is an application designed to scan specified directories and find Pe
     - Review the results in the "Results" section
 ## Installation
 
-    Clone the repository:
+    - Clone the repository:
 
-    ```bash
+    ```git clone https://github.com/ethanwaggoner/pii-scanner.git```
 
-    git clone https://github.com/ethanwaggoner/pii-scanner.git```
+    - Change to the project directory:
 
-    Change to the project directory:
+    cd pii-scanner
 
-    ```bash
+    - Install the required dependencies:
 
-    cd pii-scanner```
+    pip install -r requirements.txt
 
-    Install the required dependencies:
+## Screenshots
 
-    ```pip install -r requirements.txt```
-
-    ## Screenshots
-
-    ![image](https://user-images.githubusercontent.com/74027222/232165892-4bdcd91a-1224-45a7-8d11-e7d7c3a94c74.png)
+![image](https://user-images.githubusercontent.com/74027222/232165892-4bdcd91a-1224-45a7-8d11-e7d7c3a94c74.png)
 
 
 ## Authors
