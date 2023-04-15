@@ -1,8 +1,6 @@
 # Overview
 
-In today's digital world, protecting sensitive data is of utmost importance. The presence of malware on a client's PC can lead to the theft of Personally Identifiable Information (PII), putting individuals at risk of identity theft and organizations at risk of non-compliance with data protection regulations. Upon receiving an alert indicating potential malware activity, one of the crucial steps in assessing the impact is to determine if any PII has been compromised. This is where our PII Scanner comes into play.
-
-PII Scanner is an application designed to scan specified directories and find Personally Identifiable Information (PII) in various file formats such as CSV, PDF, Excel Sheets, Text Documents, and Word Documents. It helps to identify sensitive data that needs to be protected or removed in compliance with data privacy regulations.
+In today's digital world, protecting sensitive data is of utmost importance. The presence of malware on a client's PC can lead to the theft of Personally Identifiable Information (PII), putting individuals at risk of identity theft and organizations at risk of non-compliance with data protection regulations. Upon receiving an alert indicating potential malware activity, one of the crucial steps in assessing the impact is to determine if any PII has been compromised. This is where the PII Scanner comes into play.
 
 ## Features
 
