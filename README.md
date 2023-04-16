@@ -10,6 +10,11 @@ In today's digital world, protecting sensitive data is of utmost importance. The
     - Intuitive user interface for easy scanning and reviewing results
     - Export results
 
+## Installation
+    - python 3.11
+    - pip install -r requirements.txt
+    - python gui.py
+
 ## Usage
 
     - Choose the directory you want to scan for PII
