@@ -21,7 +21,7 @@ In today's digital world, protecting sensitive data is of utmost importance. The
 ## Screenshots
 
 ![image](https://user-images.githubusercontent.com/74027222/232281737-3c97655a-bebc-4a59-9349-5a401f2cd312.png)
-https://user-images.githubusercontent.com/74027222/232283344-8f723a70-24bd-4573-9377-c0180fa410d4.mp4
+![name](https://user-images.githubusercontent.com/74027222/232283344-8f723a70-24bd-4573-9377-c0180fa410d4.mp4)
 
 
 
