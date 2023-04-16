@@ -20,7 +20,8 @@ In today's digital world, protecting sensitive data is of utmost importance. The
     
 ## Screenshots
 
-![image](https://user-images.githubusercontent.com/74027222/232165892-4bdcd91a-1224-45a7-8d11-e7d7c3a94c74.png)
+![image](https://user-images.githubusercontent.com/74027222/232281737-3c97655a-bebc-4a59-9349-5a401f2cd312.png)
+![video](https://i.gyazo.com/b071898fc4c157fa5fd60ae3c99088f2.mp4)
 
 
 ## Authors
