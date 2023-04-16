@@ -48,6 +48,7 @@ class Scanner:
             self.count_total_files_and_post(file_extensions),
             self.scan_files(file_extensions)
         )
+        return "Completed"
 
     def get_file_extensions(self):
         file_types_extensions = {
@@ -75,30 +76,43 @@ class Scanner:
     async def search_pii(self, data):
         self.total_files_scanned += 1
         five_percent = math.ceil(self.total_files / 20)
+
         if self.total_files_scanned % five_percent == 0 or self.total_files_scanned == self.total_files:
             await self.post_async('http://localhost:5001/dashboard/total-files-scanned', self.total_files_scanned)
         if data is None:
             return
-        for pii_type in ['ssn', 'ccn', 'custom']:
+        pii_type_list = ['ssn', 'ccn', 'custom']
+        for pii_type in pii_type_list:
             if self.config['ssn'] or self.config['ccn'] or pii_type == 'custom':
                 await self.search_pii_type(data, pii_type)
 
     async def search_pii_type(self, data, pii_type):
-        # Assuming you have implemented functions like `find_censored_ssn`, `find_censored_ccn`, etc.
         pii_search = PiiSearch(self.custom_search)
         search_func_map = {
             'ssn': pii_search.us_ssn,
             'ccn': pii_search.us_ccn,
             'custom': pii_search.search_custom,
         }
-        censored_pii = await search_func_map[pii_type](str(data))
-        if censored_pii:
-            self.id += 1
-            pii = {
-                "id": self.id,
-                "pii_type": pii_type,
-                "file_path": self.filename,
-                "pii": censored_pii[0],
+        results = await search_func_map[pii_type](str(data))
 
-            }
-            await self.post_async('http://localhost:5001/dashboard/table-results', pii)
+        if pii_type == 'custom':
+            for name, censored_pii in results:
+                self.id += 1
+                pii = {
+                    "id": self.id,
+                    "pii_type": name,
+                    "file_path": self.filename,
+                    "pii": censored_pii,
+                }
+                await self.post_async('http://localhost:5001/dashboard/table-results', pii)
+        else:
+            for result in results:
+                self.id += 1
+                pii = {
+                    "id": self.id,
+                    "pii_type": pii_type.upper(),
+                    "file_path": self.filename,
+                    "pii": result,
+                }
+                await self.post_async('http://localhost:5001/dashboard/table-results', pii)
+

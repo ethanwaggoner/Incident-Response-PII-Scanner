@@ -15,6 +15,7 @@ total_files_to_scan = 0
 total_scanned = 0
 table_data = []
 scan_path = ""
+status = ""
 
 
 def file_explorer():
@@ -27,6 +28,7 @@ def file_explorer():
 
 @blueprint.route('/', methods=['GET', 'POST'])
 async def dashboard():
+    global status
     if request.method == 'POST':
         if request.form.get('get_directory') == 'get_directory':
             file_explorer()
@@ -49,10 +51,9 @@ async def dashboard():
                 'scan_path': scan_path,
                 'custom_search': custom_search
             }
-            print(custom_search)
             scanner = Scanner(data)
-            await scanner.run()
-    return render_template('dashboard.html')
+            status = await scanner.run()
+    return render_template('dashboard.html',)
 
 
 @blueprint.route('/table-results', methods=['GET', 'POST'])
@@ -88,3 +89,9 @@ async def total_files_scanned():
         return ""
 
     return jsonify(total_scanned)
+
+
+@blueprint.route('/scan-status', methods=['GET', 'POST'])
+async def scan_status():
+    global status
+    return jsonify(status)

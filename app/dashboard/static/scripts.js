@@ -1,6 +1,6 @@
 let customSearchData = [];
 
-function validateButton() {
+function validateButton(event) {
   $('#run').html('Validating...').prop('disabled', true);
   $('#hiddenRun').val('run');
 
@@ -11,9 +11,10 @@ function validateButton() {
     value: JSON.stringify(customSearchData),
   }).appendTo('#pii-form');
 
-  setTimeout(function () {
+  setTimeout(function (event) {
     $('#pii-form').submit();
   }, 100);
+
 }
 
 
@@ -27,6 +28,16 @@ function validateButton() {
     const newRow = $('<tr></tr>');
     newRow.append(`<td>${nameValue}</td>`);
     newRow.append(`<td>${regexValue}</td>`);
+
+    // Create a new table cell with a button for removing the row
+    const removeButton = $('<button type="button" class="remove-btn">Delete</button>');
+    removeButton.on('click', function () {
+      removeRow(newRow);
+    });
+    const removeButtonCell = $('<td></td>');
+    removeButtonCell.append(removeButton);
+    newRow.append(removeButtonCell);
+
     $('#custom-regex').find('tbody').append(newRow);
 
     customSearchData.push({name: nameValue, regex: regexValue});
@@ -39,6 +50,13 @@ function validateButton() {
   }
 }
 
+// Function to remove the row and update the customSearchData array
+function removeRow(row) {
+  const rowIndex = row.index();
+  customSearchData.splice(rowIndex, 1);
+  row.remove();
+}
+
   $(document).ready(function() {
 
   function refreshDataTable() {
@@ -46,12 +64,19 @@ function validateButton() {
   }
 
   function updateProgressBar() {
+    const scan_status = $.get('/dashboard/scan-status');
+
     const numerator = parseInt($('#numerator').text());
     const denominator = parseInt($('#denominator').text());
     let percentage = 0;
 
     if (denominator > 0) {
-      percentage = (numerator / denominator) * 100;
+      if (scan_status === 'Completed') {
+        percentage = 100;
+        $('#numerator').html(denominator)
+      } else {
+        percentage = (numerator / denominator) * 100;
+      }
     }
 
     $('#progress-bar')
@@ -65,32 +90,43 @@ function validateButton() {
 }
 
 
-  function checkCompletion() {
-    const numerator = parseInt($('#numerator').text());
-    const denominator = parseInt($('#denominator').text());
-
-    if (numerator === denominator && numerator > 0) {
-      $('#run').prop('disabled', false).text('Run Scan');
-    } else if (numerator < denominator) {
-      animateRunningText();
-    }
-      }
-
   function fetchDataAndUpdate() {
-  const piiCountRequest = $.get('/dashboard/pii-count');
-  const totalFilesScannedRequest = $.get('/dashboard/total-files-scanned');
-  const totalFilesRequest = $.get('/dashboard/total-files');
-
-  $.when(piiCountRequest, totalFilesScannedRequest, totalFilesRequest).done(function (piiCountData, totalFilesScannedData, totalFilesData) {
-    $('#pii-count').text(piiCountData[0]);
-    $('#numerator').text(totalFilesScannedData[0]);
-    $('#denominator').text(totalFilesData[0]);
-
-    updateProgressBar();
-    checkCompletion();
-    refreshDataTable();
+  $.get('/dashboard/pii-count', function(piiCountData) {
+    $('#pii-count').text(piiCountData);
   });
+
+  $.get('/dashboard/total-files-scanned', function(totalFilesScannedData) {
+    $('#numerator').text(totalFilesScannedData);
+  });
+
+  $.get('/dashboard/total-files', function(totalFilesData) {
+    $('#denominator').text(totalFilesData);
+  });
+
+  $.get('/dashboard/scan-status', function(scan_status) {
+    if (scan_status === 'Completed') {
+      $('#run').prop('disabled', false).text('Run Scan');
+      $('#progress-bar')
+      .css('width', 100 + '%')
+      .attr('aria-valuenow', 100);
+
+
+    } else {
+      const numerator = parseInt($('#numerator').text());
+      const denominator = parseInt($('#denominator').text());
+
+
+
+      if (numerator < denominator) {
+        animateRunningText();
+      }
+      updateProgressBar();
+    }
+  });
+
+  refreshDataTable();
 }
+
 
 
   setInterval(fetchDataAndUpdate, 1000);

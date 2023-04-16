@@ -22,7 +22,7 @@ class DataExtract:
                     text += pdf_reader.pages[page_num].extract_text()
                 return text
         except (FileNotFoundError, FileNotDecryptedError, PdfReadError, Exception) as e:
-            print(e)
+            return "Error"
 
     @staticmethod
     async def from_csv(file_path):
@@ -39,7 +39,7 @@ class DataExtract:
                 data = pd.read_excel(excel_file.name)
                 return data.to_string()
         except (FileNotFoundError, Exception) as e:
-            print(e)
+            return "Error"
 
     @staticmethod
     async def from_txt(file_path):
@@ -48,7 +48,7 @@ class DataExtract:
                 text = await file.read()
             return text
         except (FileNotFoundError, Exception):
-            return ""
+            return "Error"
 
     @staticmethod
     async def from_word(file_path):

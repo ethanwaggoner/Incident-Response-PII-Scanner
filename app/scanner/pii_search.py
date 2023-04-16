@@ -1,5 +1,5 @@
 import re
-from typing import List, Dict, Union
+from typing import List, Dict, Union, Tuple
 
 
 class PiiSearch:
@@ -7,7 +7,6 @@ class PiiSearch:
         self.custom_search = custom_search
 
         self.ssn_prefix_list = [
-            "",
             " ",
             "Social Security Number",
             "Social Security Number:",
@@ -20,7 +19,6 @@ class PiiSearch:
 
         ]
         self.ccn_prefix_list = [
-            "",
             " ",
             "Credit Card Number",
             "Credit Card Number:",
@@ -56,15 +54,18 @@ class PiiSearch:
                                                                                        uncensored_list)]
 
     async def us_ssn(self, data: str) -> List:
-        pii_list_list = [re.findall(rf"{prefix}(?:\s|-)?\b\d{{3}}(?:\s|-)?\d{{2}}(?:\s|-)?\d{{4}}\b", data)
+        pii_list_list = [re.findall(rf"{prefix}\s\b\d{{3}}-\d{{2}}-\d{{4}}\b|"
+                                    rf"{prefix}\s\b\d{{3}}\s\d{{2}}\s\d{{4}}\b|"
+                                    rf"{prefix}\s\b\d{{3}}-\d{{6}}\b", data)
                          for prefix in self.ssn_prefix_list]
         pii_list = [item for sublist in pii_list_list for item in sublist]
         return self.__censor_pii(pii_list, self.ssn_prefix_list)
 
     async def us_ccn(self, data: str) -> List:
-        pii_unclean_list_list = [
-            re.findall(rf"{prefix}(?:\s|-)?\b\d{{4}}(?:\s|-)?\d{{4}}(?:\s|-)?\d{{4}}(?:\s|-)?\d{{4}}\b", data)
-            for prefix in self.ccn_prefix_list]
+        pii_unclean_list_list = [re.findall(rf"{prefix}\s\b\d{{4}}\s\d{{4}}\s\d{{4}}\s\d{{4}}\b|"
+                                            rf"{prefix}\s\b\d{{16}}\b|"
+                                            rf"{prefix}\s\b\d{{4}}-\d{{4}}-\d{{4}}-\d{{4}}\b", data)
+                                 for prefix in self.ccn_prefix_list]
 
         pii_unclean_list = [item for sublist in pii_unclean_list_list for item in sublist]
 
@@ -73,17 +74,18 @@ class PiiSearch:
 
         return self.__censor_pii(pii_list, self.ccn_prefix_list)
 
-    async def search_custom(self, data: str) -> List[str]:
+    async def search_custom(self, data: str) -> List[Tuple[str, str]]:
         result_list = []
 
         if self.custom_search:
             for custom in self.custom_search:
                 regex = custom.get("regex", "")
+                name = custom.get("name", "")
 
                 if regex:
                     matches = re.findall(regex, data)
                     if matches:
-                        result_list.extend(matches)
+                        for match in matches:
+                            result_list.append((name, match))
 
         return result_list
-
