@@ -1,12 +1,8 @@
-import asyncio
 import json
-import os
-import subprocess
-from asyncio import run
 
 from PyQt5.QtWidgets import QApplication, QFileDialog
 
-from flask import render_template, request, session, jsonify, flash
+from flask import render_template, request, jsonify, flash
 
 from . import blueprint
 from app.scanner.scanner import Scanner

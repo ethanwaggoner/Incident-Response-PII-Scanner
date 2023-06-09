@@ -1,7 +1,7 @@
 let customSearchData = [];
 
 function validateButton(event) {
-  $('#run').html('Validating...').prop('disabled', true);
+  $('#run').html('Validating. This may take a few minutes.').prop('disabled', true);
   $('#hiddenRun').val('run');
 
   // Include customSearchData in the form data
@@ -105,7 +105,8 @@ function removeRow(row) {
 
   $.get('/dashboard/scan-status', function(scan_status) {
     if (scan_status === 'Completed') {
-      $('#run').prop('disabled', false).text('Run Scan');
+      $('#run').prop('disabled', true).text('Completed');
+      $('#get_directory').prop('disabled', true);
       $('#progress-bar')
       .css('width', 100 + '%')
       .attr('aria-valuenow', 100);
